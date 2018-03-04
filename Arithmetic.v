@@ -30,3 +30,30 @@ module Add(x, y, sub, sum, cout,ovr);
 	
 	
 endmodule
+
+module Mult (x,out,cout);
+	input [7:0] x;
+	output [7:0] out;
+	output cout;
+	always @(x)
+	begin
+		if(out[7] == 1)
+			cout = 1;
+		out = x << 1;
+	end
+endmodule
+
+module Div (x,out,rem);
+	input [7:0] x;
+	output [7:0] out;
+	output rem;
+	always @(x)
+	begin
+		if(out[0] == 1)
+			rem = 1;
+		else
+			rem = 0;
+		out = x >> 1;
+	end
+endmodule
+	

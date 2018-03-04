@@ -40,6 +40,11 @@ module LESS(x,y,out,en);
      end
 endmodule // LESS
 
-//module MAX(x,y,out,en);
-//   
-//endmodule // MAX
+module MAX(x,y,out,en);
+	input [3:0] x,y;
+	input en;
+	output [3:0] out;
+
+	assign out = (x>y) ? x:y;
+	
+endmodule // MAX
