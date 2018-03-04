@@ -34,15 +34,24 @@ module Project1_top(
 //  REG/WIRE declarations
 //=======================================================
 	wire [7:0] s;
+	wire [3:0] COMP_TEST;
 
 
 
 //=======================================================
 //  Structural coding
 //=======================================================
-	SevenSeg testHex0(s[3:0],HEX0[6:0]);	
-	Add testAdd(SW[7:4],SW[3:0],0,s[3:0],HEX0[7],LEDR[7]);
 	
-
+	EQUAL testComp(Sw[7:4],SW[3:0],COMP_TEST[0],0);
+	SevenSeg testC(COMP_TEST[0],HEX5[6:0]);
+	
+	GREATER testComp(Sw[7:4],SW[3:0],COMP_TEST[1],0);
+	SevenSeg testC(COMP_TEST[1],HEX5[6:0]);
+	
+	LESS testComp(Sw[7:4],SW[3:0],COMP_TEST[2],0);
+	SevenSeg testC(COMP_TEST[2],HEX5[6:0]);
+	
+	MAX testComp(Sw[7:4],SW[3:0],COMP_TEST[3],0);
+	SevenSeg testC(COMP_TEST[3],HEX5[6:0]);
 
 endmodule
