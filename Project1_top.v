@@ -41,7 +41,7 @@ module Project1_top(
 //  Structural coding
 //=======================================================
 	SevenSeg testHex0(s[3:0],HEX0[6:0]);	
-	Add testAdd(7,27,0,s[3:0],HEX0[7],LEDR[7]);
+	Add testAdd(SW[7:4],SW[3:0],0,s[3:0],HEX0[7],LEDR[7]);
 	
 
 

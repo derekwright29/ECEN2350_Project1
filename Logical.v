@@ -1,6 +1,7 @@
 module AND_D(x,y,out,en);
    input [3:0] x,y;
    output reg [3:0] out;
+	input en;
 
    integer 	i;
    always @(x,y)
@@ -15,6 +16,7 @@ endmodule // AND_D
 module OR_D(x,y,out,en);
    input [3:0] x,y;
    output reg [3:0] out;
+	input en;
 
    integer 	i;
    always @(x,y)
@@ -29,6 +31,7 @@ endmodule // OR_D
 module XOR_D(x,y,out,en);
    input [3:0] x,y;
    output reg [3:0] out;
+	input en;
 
    integer 	i;
    always @(x,y)
@@ -43,6 +46,7 @@ endmodule // XOR_D
 module NOT_D(z,out,en);
    input [7:0] z;
    output reg [7:0] out;
+	input en;
 
    integer 	i;
    always @(z)
