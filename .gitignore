@@ -16,3 +16,5 @@
 *.pof
 *.qdf
 *.qps
+db
+incremental_db
