@@ -1,5 +1,6 @@
 module SevenSeg (x, leds,off);
 	input [3:0] x;
+	input off;
 	output reg [6:0] leds;
 
 	always @(x,off)
