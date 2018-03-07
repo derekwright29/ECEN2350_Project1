@@ -52,8 +52,8 @@ module Project1_top(
    wire [3:0] 			 eq_out;
    wire [3:0] 			 max_out;
    //reg for magic LEDS
-   reg [11:0] 			 magic_out;
-	assign LEDR[9:0] = magic_out[10:1];
+	wire[11:0] 			 magic_int;
+	assign LEDR[9:0] = magic_int[10:1];
 	
 	//clock for magic
 	wire 					magic_clk;
@@ -69,6 +69,8 @@ module Project1_top(
    
    wire 			 carry_out;
    wire 			 overflow;
+	assign HEX2[7] = ~carry_out; //not because hex LEDs are active low
+	assign HEX3[7] = ~overflow;
    
    reg [1:0] 			 buttons;
 	wire [1:0] 			 switches;
@@ -87,9 +89,9 @@ module Project1_top(
 				 
     //Turn off middle two seven-segs
    SevenSeg make_blank0(0,HEX2[6:0],1);
-   assign HEX2[7] = 0;
+   assign HEX2[7] = 1;
    SevenSeg make_blank1(0,HEX3[6:0],1);
-   assign HEX3[7] = 0;
+   assign HEX3[7] = 1;
    
    // Keep track of button sate control
    always @(posedge KEY[1])
@@ -134,7 +136,7 @@ module Project1_top(
 //   Mult(z, mult_out);
 	
 	clock_div(MAX10_CLK1_50, magic_clk);
-	magic(magic_clk, magic_out);
+	magic(magic_clk, magic_int);
    
    
    

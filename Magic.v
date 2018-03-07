@@ -1,6 +1,6 @@
 module magic(clk,led_reg);
    input clk;
-   output reg [11:0] led_reg;
+   output  reg [11:0] led_reg;
    reg 	     dir;
 	initial
 	begin
