@@ -6,31 +6,61 @@ module fullAdder(cin, x, y, sum, cout);
 endmodule
 
 
-module Add(x, y, sub, sum, cout,ovr);
+module Add(x, y, sum, cout); //no ovr used because not a full subtractor/adder.
    parameter n = 4;
    parameter cin = 0; //rarely used. Why waste an input
 	
    input [n-1:0] x,y;
-   input 	 sub;
    output [n-1:0] sum;
-   output 	  cout,ovr;
+   output 	  cout;
    
    wire [n:0] 	  carries; //n+1 wires for the cout
    
    assign carries[0] = cin;
-   assign cout = ~carries[n];
+   assign cout = carries[n];
 
    genvar 	  i;
    generate
       for (i=0;i<n;i=i+1)
-	begin:digit
-		     
+	begin:digit	     
 	   fullAdder dig(carries[i],x[i],y[i],sum[i],carries[i+1]);
 	end
    endgenerate 
    
+endmodule // Add
+
+module fullSub(bin, x, y, diff, bout);
+   input bin, x, y;
+   output diff, bout;
+
+   assign diff = x ^ y ^ bin;
+   assign bout = (((~x)&bin) | ((~x)&y) | (y&bin));
+endmodule // fullSub
+
+module Sub(x,y,diff,bout);
+   parameter n = 4;
+   parameter bin = 0;
    
-endmodule
+   input [n-1:0] x,y;
+   output [n-1:0] diff;
+   output 	bout;
+   
+   wire [n:0] 	borrows;
+   assign borrows[0] = bin;
+   assign bout = borrows[n];
+
+   genvar 	i;
+   generate
+      for(i=0;i<n;i=i+1)
+	begin:digit
+	   fullSub(borrows[i],x[i],y[i],diff[i],borrows[i+1]);
+	end
+    endgenerate
+endmodule // Sub
+
+   
+   
+
 
 module Mult (x,out,cout);
    input [7:0] x;
