@@ -9,7 +9,7 @@ endmodule
 module Add(x, y, sum, cout); //no ovr used because not a full subtractor/adder.
    parameter n = 4;
    parameter cin = 0; //rarely used. Why waste an input
-	
+   
    input [n-1:0] x,y;
    output [n-1:0] sum;
    output 	  cout;
@@ -32,7 +32,7 @@ endmodule // Add
 module fullSub(bin, x, y, diff, bout);
    input bin, x, y;
    output diff, bout;
-
+   
    assign diff = x ^ y ^ bin;
    assign bout = (((~x)&bin) | ((~x)&y) | (y&bin));
 endmodule // fullSub
@@ -43,23 +43,21 @@ module Sub(x,y,diff,bout);
    
    input [n-1:0] x,y;
    output [n-1:0] diff;
-   output 	bout;
+   output 	  bout;
    
-   wire [n:0] 	borrows;
+   wire [n:0] 	  borrows;
    assign borrows[0] = bin;
    assign bout = borrows[n];
-
-   genvar 	i;
+   
+   genvar 	  i;
    generate
       for(i=0;i<n;i=i+1)
 	begin:digit
 	   fullSub(borrows[i],x[i],y[i],diff[i],borrows[i+1]);
 	end
-    endgenerate
+   endgenerate
 endmodule // Sub
 
-   
-   
 
 
 module Mult (x,out,cout);
@@ -68,9 +66,9 @@ module Mult (x,out,cout);
    output 	reg cout;
    always @(x)
      begin
-		if(out[7] == 1)
-			cout = 1;
-		out = x << 1;
+	if(out[7] == 1)
+	  cout = 1;
+	out = x << 1;
      end
 endmodule
 
@@ -90,6 +88,6 @@ endmodule
 
 
 //Things that need a carryout/overflow/digital indicator output:
-// Add, Sub need two: carryout and overflow
+// Add, Sub need two: carryout and overflow --bailing on overflow. Making separate adder/subtractor
 // Mult/Div need one: carryout
 //
