@@ -1,7 +1,6 @@
-module EQUAL(x, y, out,en);
+module EQUAL(x, y, out);
    input [3:0] x,y;
    output   reg   out;
-	input en;
 
    always @(x,y)
      begin
@@ -12,12 +11,11 @@ module EQUAL(x, y, out,en);
      end
 endmodule // EQUAL
 
-module GREATER(x,y,out,en);
+module GREATER(x,y,out);
    input [3:0] x,y;
    output 	reg	out;
-	input en;
 
-   always @(x,y,en)
+   always @(x,y)
      begin
 	if(x > y)
 	  out = 1;
@@ -26,10 +24,9 @@ module GREATER(x,y,out,en);
      end
 endmodule // GREATER
 
-module LESS(x,y,out,en);
+module LESS(x,y,out);
    input [3:0] x,y;
    output   reg   out;
-	input en;
 
    always @(x,y)
      begin
@@ -40,9 +37,8 @@ module LESS(x,y,out,en);
      end
 endmodule // LESS
 
-module MAX(x,y,out,en);
+module MAX(x,y,out);
 	input [3:0] x,y;
-	input en;
 	output [3:0] out;
 
 	assign out = (x>y) ? x:y;

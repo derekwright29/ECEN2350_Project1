@@ -39,38 +39,45 @@ module Project1_top(
    //arithmetic outs
    wire [3:0] 			 add_out;
    wire [3:0] 			 sub_out;
-   wire [3:0] 			 mult_out;
-   wire [3:0] 			 div_out;
+   wire [7:0] 			 mult_out;
+   wire [7:0] 			 div_out;
    //logic outs
    wire [3:0] 			 or_out;
    wire [3:0] 			 and_out;
    wire [3:0] 			 xor_out;
    wire [7:0] 			 not_out;
    //comparison outs
-   wire [3:0] 			 greater_out;
-   wire [3:0] 			 less_out;
-   wire [3:0] 			 eq_out;
-   wire [3:0] 			 max_out;
-   //reg for magic LEDS
+   wire 					 greater_out;
+   wire 		 			less_out;
+   wire 	 				eq_out;
+   wire [3:0]			 max_out;
+   //wires for magic LEDS
 	wire[11:0] 			 magic_int;
-	assign LEDR[9:0] = magic_int[10:1];
+	reg[11:0]			 magic_out;
+	assign LEDR[9:0] = magic_out[10:1];
 	
 	//clock for magic
 	wire 					magic_clk;
    
    //	//final out to 7-seg
-   wire [3:0] 			 mux_out;
+   wire [7:0] 			 mux_out;
    
-   wire [3:0] 			 arith_out;
+   wire [7:0] 			 arith_out;
    wire [3:0] 			 comp_out;
-   wire [3:0] 			 log_out;
-   wire [3:0] 			 magic;
-   assign magic = 0;
+   wire [7:0] 			 log_out;
    
-   wire 			 carry_out;
-   wire 			 overflow;
-	assign HEX2[7] = ~carry_out; //not because hex LEDs are active low
-	assign HEX3[7] = ~overflow;
+   wire 			 carry_int;
+	reg 			carry_out;
+   wire 			 borrow_int;
+	reg 			borrow_out;
+	assign HEX0[7] = ~carry_out; //not because hex LEDs are active low
+	assign HEX1[7] = ~borrow_out;
+	wire 				mult_cint;
+	reg 			mult_cout;
+	wire 				div_rem_int;
+	reg 			div_rem;
+	assign HEX2[7] = ~mult_cout;
+	assign HEX3[7] = ~div_rem;
    
    reg [1:0] 			 buttons;
 	wire [1:0] 			 switches;
@@ -83,57 +90,83 @@ module Project1_top(
 	assign y = SW[3:0];
 	assign z = SW[7:0]; // same as {x,y}
    
-				 //=======================================================
-				 //  Structural coding
-				 //=======================================================
-				 
+	 //=======================================================
+	 //  Structural coding
+	 //=======================================================
+	 
     //Turn off middle two seven-segs
    SevenSeg make_blank0(0,HEX2[6:0],1);
-   assign HEX2[7] = 1;
    SevenSeg make_blank1(0,HEX3[6:0],1);
-   assign HEX3[7] = 1;
+	//I don't use these LEDs
+	assign HEX4[7] = 1;
+	assign HEX5[7] = 1;
    
    // Keep track of button sate control
    always @(posedge KEY[1])
      begin
-	buttons[1] = buttons[1] ^ 1;
+	buttons[1] = ~buttons[1];
      end
    
    always @(posedge KEY[0])
      begin
-	buttons[0] = buttons[0] ^ 1;
+	buttons[0] = ~buttons[0];
      end
-   
+	//enable magic function
+	always @(buttons,switches)
+	begin
+		magic_out = 0;
+		carry_out = 0;
+		borrow_out = 0;
+		mult_cout = 0;
+		div_rem = 0;
+		if (buttons == 0)
+		begin
+			case(switches)
+				0: carry_out = carry_int;
+				1: borrow_out = borrow_int;
+				2: mult_cout = mult_cint;
+				3: div_rem = div_rem_int;
+			endcase
+		end
+		else if (buttons == 3)
+			magic_out = magic_int[10:1];
+	
+	end
+	
 
 //   
 //   //Higher level mux: Log, Arith, Comp, Magic	
-//   mux_4_1 gp_out(buttons, arith_out,comp_out,log_out,magic, mux_out);
+  mux_4_1 gp_out(buttons, arith_out,comp_out,log_out,magic, mux_out);
 //   
 //   //Lower level mux for input selection
-//   mux_4_1 logic_out(switches,and_out,or_out,xor_out,not_out,log_out);
+  mux_4_1 logic_out(switches,and_out,or_out,xor_out,not_out,log_out);
 //   
-//   mux_4_1 comparison_out(switches,greater_out,less_out,eq_out,max_out,comp_out);
+  mux_4_1 comparison_out(switches,greater_out,less_out,eq_out,max_out,comp_out);
 //   
-//   mux_4_1 arithmetic_out(switches,add_out,sub_out,mult_out,div_out,arith_out);
+   mux_4_1 arithmetic_out(switches,add_out,sub_out,mult_out,div_out,arith_out);
    
    //input displayed left two dispays
    SevenSeg input1(x,HEX5[6:0],0);
    SevenSeg input2(y,HEX4[6:0],0);
+	
+	//output to sevensegs
+	SevenSeg output1(mux_out[7:4],HEX1[6:0],0);
+	SevenSeg output2(mux_out[3:0],HEX0[6:0],0);
    
-//   OR_D(x,y,or_out);
-//   AND_D(x,y,and_out);
-//   XOR_D(x,y,xor_out);
-//   NOT_D(z,not_out);
-//   GREATER(x,y,greater_out);
-//   LESS(x,y,less_out);
-//   EQUAL(x,y,eq_out);
-//   MAX(x,y,max_out);
-//   //TODO
-//	Sub();
-//	Add(x,y,);
-//	//end TODO
-//   Div(z,div_out);
-//   Mult(z, mult_out);
+   OR_D(x,y,or_out);
+   AND_D(x,y,and_out);
+   XOR_D(x,y,xor_out);
+   NOT_D(z,not_out);
+   GREATER(x,y,greater_out);
+   LESS(x,y,less_out);
+   EQUAL(x,y,eq_out);
+   MAX(x,y,max_out);
+
+	Sub(x,y,sub_out, borrow_int);
+	Add(x,y,add_out, carry_int);
+
+   Div(z,div_out,div_rem_int);
+   Mult(z, mult_out,mult_cint);
 	
 	clock_div(MAX10_CLK1_50, magic_clk);
 	magic(magic_clk, magic_int);

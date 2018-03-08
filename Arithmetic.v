@@ -51,7 +51,7 @@ module Sub(x,y,diff,bout);
    
    genvar 	  i;
    generate
-      for(i=0;i<n;i=i+1)
+      for(i=0;i<n; i=i+1)
 	begin:digit
 	   fullSub(borrows[i],x[i],y[i],diff[i],borrows[i+1]);
 	end
@@ -63,11 +63,13 @@ endmodule // Sub
 module Mult (x,out,cout);
    input [7:0] x;
    output reg [7:0] out;
-   output 	reg cout;
+   output  reg cout;
    always @(x)
      begin
-	if(out[7] == 1)
+	if(x[7] == 1)
 	  cout = 1;
+	else 
+		cout = 0;
 	out = x << 1;
      end
 endmodule
@@ -78,7 +80,7 @@ module Div (x,out,rem);
    output 	reg rem;
    always @(x)
      begin
-	if(out[0] == 1)
+	if(x[0] == 1)
 	  rem = 1;
 	else
 	  rem = 0;
