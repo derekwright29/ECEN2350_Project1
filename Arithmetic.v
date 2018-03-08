@@ -8,7 +8,7 @@ endmodule
 
 module Add(x, y, sum, cout); //no ovr used because not a full subtractor/adder.
    parameter n = 4;
-   parameter cin = 0; //rarely used. Why waste an input
+   parameter cin = 0; //only would be used for twos compliment addition; I didn't do that.
    
    input [n-1:0] x,y;
    output [n-1:0] sum;
@@ -87,9 +87,3 @@ module Div (x,out,rem);
 	out = x >> 1;
      end
 endmodule
-
-
-//Things that need a carryout/overflow/digital indicator output:
-// Add, Sub need two: carryout and overflow --bailing on overflow. Making separate adder/subtractor
-// Mult/Div need one: carryout
-//

@@ -41,6 +41,6 @@ module MAX(x,y,out);
 	input [3:0] x,y;
 	output [3:0] out;
 
-	assign out = (x>y) ? x:y;
+	assign out = (x>y) ? x:y; // just an inline if-else statement. Can use assign this way.
 	
 endmodule // MAX

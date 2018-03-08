@@ -30,26 +30,17 @@ module Project1_top(
 		    //////////// SW //////////
 		    input [9:0]  SW
 		    );
-   
-   
-   
    //=======================================================
    //  REG/WIRE declarations
    //=======================================================
    //arithmetic outs
-   wire [3:0] 			 add_out;
-   wire [3:0] 			 sub_out;
-   wire [7:0] 			 mult_out;
-   wire [7:0] 			 div_out;
+   wire [3:0] 			 add_out, sub_out;
+   wire [7:0] 			 mult_out,div_out;
    //logic outs
-   wire [3:0] 			 or_out;
-   wire [3:0] 			 and_out;
-   wire [3:0] 			 xor_out;
+   wire [3:0] 			 or_out,and_out,xor_out;
    wire [7:0] 			 not_out;
    //comparison outs
-   wire 					 greater_out;
-   wire 		 			less_out;
-   wire 	 				eq_out;
+   wire 					 greater_out,less_out,eq_out;
    wire [3:0]			 max_out;
    //wires for magic LEDS
 	wire[11:0] 			 magic_int;
@@ -66,9 +57,9 @@ module Project1_top(
    wire [3:0] 			 comp_out;
    wire [7:0] 			 log_out;
    
-   wire 			 carry_int;
+	wire 			 	carry_int;
 	reg 			carry_out;
-   wire 			 borrow_int;
+	wire 			 borrow_int;
 	reg 			borrow_out;
 	assign HEX0[7] = ~carry_out; //not because hex LEDs are active low
 	assign HEX1[7] = ~borrow_out;
@@ -101,17 +92,17 @@ module Project1_top(
 	assign HEX4[7] = 1;
 	assign HEX5[7] = 1;
    
-   // Keep track of button sate control
+   //Button sate control
    always @(posedge KEY[1])
      begin
 	buttons[1] = ~buttons[1];
      end
-   
    always @(posedge KEY[0])
      begin
-	buttons[0] = ~buttons[0];
+		buttons[0] = ~buttons[0];
      end
-	//enable magic function
+	  
+	//case handling for magic, as well as binary LED outputs for Arithmetic module
 	always @(buttons,switches)
 	begin
 		magic_out = 0;
@@ -129,23 +120,26 @@ module Project1_top(
 			endcase
 		end
 		else if (buttons == 3)
-			magic_out = magic_int[10:1];
+			magic_out = magic_int;
 	
 	end
-	
-
-//   
-//   //Higher level mux: Log, Arith, Comp, Magic	
-  mux_4_1 gp_out(buttons, arith_out,comp_out,log_out,magic, mux_out);
-//   
-//   //Lower level mux for input selection
-  mux_4_1 logic_out(switches,and_out,or_out,xor_out,not_out,log_out);
-//   
-  mux_4_1 comparison_out(switches,greater_out,less_out,eq_out,max_out,comp_out);
-//   
-   mux_4_1 arithmetic_out(switches,add_out,sub_out,mult_out,div_out,arith_out);
    
-   //input displayed left two dispays
+  //Higher level mux: Log, Arith, Comp, Magic	
+  mux_4_1 gp_out(buttons, arith_out,comp_out,log_out,magic, mux_out);
+  //Arith: 00; Comp : 01; Log: 10; Magic: don't care, zeroes.
+  //
+   
+  //Lower level mux for input selection
+  mux_4_1 logic_out(switches,and_out,or_out,xor_out,not_out,log_out);
+  //AND: 00; OR:01; XOR:10; NOT:11
+   
+  mux_4_1 comparison_out(switches,greater_out,less_out,eq_out,max_out,comp_out);
+  //GR:00; LESS:01; EQ:10; MAX: 11
+  
+  mux_4_1 arithmetic_out(switches,add_out,sub_out,mult_out,div_out,arith_out);
+  //Add:00; Sub:10; Mult:10; Div:11
+   
+   //user input displayed left two dispays. Helps debug and tell which mode we are in.
    SevenSeg input1(x,HEX5[6:0],0);
    SevenSeg input2(y,HEX4[6:0],0);
 	
@@ -153,27 +147,24 @@ module Project1_top(
 	SevenSeg output1(mux_out[7:4],HEX1[6:0],0);
 	SevenSeg output2(mux_out[3:0],HEX0[6:0],0);
    
+	//Instantiate all modules
+	//Logic
    OR_D(x,y,or_out);
    AND_D(x,y,and_out);
    XOR_D(x,y,xor_out);
    NOT_D(z,not_out);
+	//Comparison
    GREATER(x,y,greater_out);
    LESS(x,y,less_out);
    EQUAL(x,y,eq_out);
    MAX(x,y,max_out);
-
+	//Arithmetic
 	Sub(x,y,sub_out, borrow_int);
 	Add(x,y,add_out, carry_int);
-
    Div(z,div_out,div_rem_int);
    Mult(z, mult_out,mult_cint);
-	
+	//Magic
 	clock_div(MAX10_CLK1_50, magic_clk);
 	magic(magic_clk, magic_int);
-   
-   
-   
-	
-	
 
 endmodule

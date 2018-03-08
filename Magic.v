@@ -4,7 +4,7 @@ module magic(clk,led_reg);
    reg 	     dir;
 	initial
 	begin
-		//init led_reg
+		//init led_reg to some middle LEDs.
 		led_reg = 96;
 	end
    always @(posedge clk)

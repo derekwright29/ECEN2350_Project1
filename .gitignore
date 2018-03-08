@@ -12,7 +12,6 @@
 *.pin
 *.sld
 *.qws
-*.sof
 *.pof
 *.qdf
 *.qps
